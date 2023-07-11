@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Widget noteCard(
-    Function()? onTap, QueryDocumentSnapshot doc, Function()? onLongPress) {
-  return InkWell(
-    onLongPress: onLongPress,
-    onTap: onTap,
+  QueryDocumentSnapshot doc,
+) {
+  return Material(
+    color: Colors.transparent,
     child: Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.all(8),
