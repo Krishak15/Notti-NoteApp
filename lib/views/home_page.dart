@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_noteapp/constants/themes.dart';
+import 'package:firebase_noteapp/views/note_editor.dart';
 import 'package:firebase_noteapp/views/search_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/delete_popup.dart';
 import '../widgets/note_cards.dart';
-import 'note_editor.dart';
-import 'note_viewer.dart';
+import 'add_notes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(15),
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => NoteSearchPage()));
@@ -107,22 +107,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             children: snapshot.data!.docs.map((note) {
                               // int index = snapshot.data!.docs.indexOf(note);
-                              return noteCard(
-                                () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          NoteViewer(doc: note),
-                                    ),
-                                  );
-                                },
-                                note,
-                                () {
-                                  showDeleteConfirmationDialog(
-                                      context, note.id, deleteDocument);
-                                },
-                              );
+                              return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => NoteEditorPage(
+                                          wholeData: note,
+                                          id: note.id,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  // note,
+                                  onLongPress: () {
+                                    showDeleteConfirmationDialog(
+                                        context, note.id, deleteDocument);
+                                  },
+                                  child: Hero(
+                                      tag: 'card${note.id}',
+                                      child: noteCard(note)));
                             }).toList(),
                           );
                         },
@@ -137,40 +141,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
               ),
-
-              //  StreamBuilder<QuerySnapshot>(
-              //   stream: FirebaseFirestore.instance
-              //       .collection("users")
-              //       .doc(FirebaseAuth.instance.currentUser!.uid)
-              //       .collection('notes')
-              //       .snapshots(),
-              //   builder: (context, snapshot) {
-              //     if (snapshot.hasData) {
-              //       return InkWell(
-
-              //         child: GridView(
-              //           gridDelegate:
-              //               const SliverGridDelegateWithFixedCrossAxisCount(
-              //                   crossAxisCount: 2),
-              //           children: snapshot.data!.docs
-              //               .map((note) => noteCard(() {
-              //                     Navigator.push(
-              //                         context,
-              //                         MaterialPageRoute(
-              //                           builder: (context) =>
-              //                               NoteViewer(doc: note),
-              //                         ));
-              //                   }, note))
-              //               .toList(),
-              //         ),
-              //       );
-              //     } else {
-              //       return const Center(
-              //         child: CircularProgressIndicator(),
-              //       );
-              //     }
-              //   },
-              // ),
             ),
           ],
         ),
@@ -180,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const NoteEditorPage(),
+                builder: (context) => const AddNotesPage(),
               ));
         },
         label: const Text('Add Note'),
