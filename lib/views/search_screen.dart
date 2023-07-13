@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_noteapp/constants/themes.dart';
+import 'package:firebase_noteapp/views/note_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 import '../constants/appstyles.dart';
 import '../widgets/search_txtfield.dart';
-import 'note_viewer.dart';
 
 class NoteSearchPage extends StatefulWidget {
   const NoteSearchPage({super.key});
@@ -55,7 +56,7 @@ class _NoteSearchPageState extends State<NoteSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryColor,
+      backgroundColor: HexColor('#313552'),
       appBar: AppBar(
         title: const Text('Note Search'),
         centerTitle: true,
@@ -91,73 +92,78 @@ class _NoteSearchPageState extends State<NoteSearchPage> {
                     itemBuilder: (context, index) {
                       DocumentSnapshot note = searchResults[index];
 
-                      return InkWell(
+                      return GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => NoteViewer(doc: note),
+                              builder: (context) =>
+                                  NoteEditorPage(wholeData: note, id: note.id),
                             ),
                           );
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          margin: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage(bgImages[note['image_id']]),
-                                  fit: BoxFit.cover),
-                              color: cardsColori[note['color_id']],
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    width: double.infinity,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            note['title'],
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Expanded(
-                                            child: SizedBox(
-                                                child: Text(
-                                              note['description'],
+                        child: Hero(
+                          tag: 'card${note.id}}',
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            margin: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image:
+                                        AssetImage(bgImages[note['image_id']]),
+                                    fit: BoxFit.cover),
+                                color: cardsColori[note['color_id']],
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      width: double.infinity,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              note['title'],
                                               overflow: TextOverflow.ellipsis,
-                                              maxLines: 4,
+                                              maxLines: 2,
                                               style: GoogleFonts.poppins(
-                                                  fontSize: 12),
-                                            )),
-                                          ),
-                                        ],
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            Expanded(
+                                              child: SizedBox(
+                                                  child: Text(
+                                                note['description'],
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 4,
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 12),
+                                              )),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Text(
-                                note['created'].toString(),
-                                style: GoogleFonts.poppins(fontSize: 10),
-                              )
-                            ],
+                                Text(
+                                  note['created'].toString(),
+                                  style: GoogleFonts.poppins(fontSize: 10),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       );
