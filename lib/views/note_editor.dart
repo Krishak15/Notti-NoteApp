@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_noteapp/constants/appstyles.dart';
 import 'package:firebase_noteapp/widgets/bg_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -27,9 +29,16 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
+
   int? colorID;
-  int? selectedColorIndex = 1;
-  int? selectedImageIndex = 1;
+  int? selectedColorIndex = 0;
+  int? selectedImageIndex = 0;
 
   // String date = DateTime.now().toString();
 
@@ -50,11 +59,76 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     colorID = Random().nextInt(colorProvider.cardsColor.length);
 
     void resetIndex() {
-      colorProvider.setSelectedImageIndex(1);
+      colorProvider.setSelectedImageIndex(0);
+      colorProvider.setSelectedColorIndex(0);
     }
 
     selectedColorIndex = colorProvider.selectedColorIndex;
     selectedImageIndex = colorProvider.selectedImageIndex;
+
+    //
+    //
+
+    int myImageVariable = selectedImageIndex!;
+    int myColorVariable = selectedColorIndex!;
+    const previousValue = 0;
+
+    void checkImageVariableChane() {
+      if (myImageVariable != previousValue) {
+        // Value has changed
+        if (myImageVariable == selectedImageIndex) {
+          if (kDebugMode) {
+            print('The variable has changed to $myImageVariable');
+          }
+        } else {
+          // Perform some action for other changed values
+          if (kDebugMode) {
+            print('The variable has changed to a different value');
+          }
+        }
+      } else {
+        myImageVariable = widget.wholeData['image_id']; // Value has not changed
+      }
+
+      //if variable match firebase value
+      if (myImageVariable == widget.wholeData['image_id']) {
+        myImageVariable = widget.wholeData['image_id'];
+        colorProvider.setSelectedImageIndex(0);
+        if (kDebugMode) {
+          print("Firebase image_id matched the previous value");
+        }
+      }
+    }
+
+    //
+
+    void checkColorVariableChange() {
+      if (myColorVariable != previousValue) {
+        // Value has changed
+        if (myColorVariable == selectedColorIndex) {
+          if (kDebugMode) {
+            print('The variable has changed to $myColorVariable');
+          }
+        } else {
+          // Perform some action for other changed values
+          if (kDebugMode) {
+            print('The variable has changed to a different value');
+          }
+        }
+      } else {
+        myColorVariable = widget.wholeData['color_id']; // Value has not changed
+      }
+
+      //if variable match firebase value
+      if (myColorVariable == widget.wholeData['color_id']) {
+        myColorVariable = widget.wholeData['color_id'];
+        colorProvider.setSelectedColorIndex(0);
+        if (kDebugMode) {
+          print("Firebase color_id matched the previous value");
+        }
+      }
+    }
+    //
 
     final snapShotData = widget.wholeData;
 
@@ -70,8 +144,6 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
           centerTitle: true,
           backgroundColor: Colors.transparent,
         ),
-        backgroundColor:
-            colorProvider.cardsColor[selectedColorIndex ?? colorID!],
         body: Hero(
           tag: 'card${widget.id}',
           child: Material(
@@ -81,8 +153,11 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
               height: double.infinity,
               width: double.infinity,
               decoration: BoxDecoration(
+                color: selectedColorIndex == 0
+                    ? colorProvider.cardsColor[snapShotData['color_id']]
+                    : colorProvider.cardsColor[selectedColorIndex!],
                 image: DecorationImage(
-                    image: AssetImage(selectedImageIndex == 1
+                    image: AssetImage(selectedImageIndex == 0
                         ? colorProvider.bgImagesP[snapShotData['image_id']]
                         : colorProvider.bgImagesP[selectedImageIndex!]),
                     fit: BoxFit.cover),
@@ -98,8 +173,11 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                           ),
                           Text(getFormattedDateTime()),
                           Padding(
-                            padding: const EdgeInsets.all(15.0),
+                            padding: const EdgeInsets.only(
+                                left: 15.0, right: 15.0, top: 15),
                             child: TextFormField(
+                              style: GoogleFonts.poppins(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
                               controller: _titleController,
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
@@ -111,8 +189,11 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(15.0),
+                            padding: const EdgeInsets.only(
+                                left: 15.0, right: 15.0, bottom: 10),
                             child: TextFormField(
+                              style: GoogleFonts.poppins(
+                                  fontSize: 14, fontWeight: FontWeight.w400),
                               controller: _contentController,
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
@@ -136,23 +217,28 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                                       showModalBottomSheet(
                                           context: context,
                                           builder: (BuildContext context) {
-                                            return Column(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: SizedBox(
-                                                      height: 200,
-                                                      child:
-                                                          ColorPickerWidget()),
-                                                ),
-                                              ],
+                                            return const SingleChildScrollView(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.all(8.0),
+                                                    child: SizedBox(
+                                                        height: 400,
+                                                        child:
+                                                            ColorPickerWidget()),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           });
                                     },
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.color_lens,
                                       size: 30,
+                                      color: Colors.blueGrey.shade800,
                                     ),
                                   ),
                                   const SizedBox(
@@ -163,20 +249,27 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                                       showModalBottomSheet(
                                           context: context,
                                           builder: (BuildContext context) {
-                                            return const Column(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: SizedBox(
-                                                      height: 300,
-                                                      child: BgPickerWidget()),
-                                                ),
-                                              ],
+                                            return const SingleChildScrollView(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.all(8.0),
+                                                    child: SizedBox(
+                                                        height: 400,
+                                                        child:
+                                                            BgPickerWidget()),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           });
                                     },
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.image,
+                                      color: Colors.blueGrey.shade800,
                                       size: 30,
                                     ),
                                   )
@@ -195,10 +288,12 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
+            checkImageVariableChane();
+            checkColorVariableChange();
             if (_titleController.text.isNotEmpty &&
                 _contentController.text.isNotEmpty) {
-              updateData();
-              colorProvider.setSelectedImageIndex(1);
+              updateData(myImageVariable, myColorVariable);
+              // colorProvider.setSelectedImageIndex(0);
             } else {
               const snackBar = SnackBar(
                 content: Text('Add Something !'),
@@ -214,7 +309,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     );
   }
 
-  void updateData() {
+  void updateData(int myVarImageId, int myVarColorId) {
     CollectionReference ref = FirebaseFirestore.instance
         .collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -225,16 +320,19 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     var data = {
       "title": title ?? _titleController.text,
       "description": description ?? _contentController.text,
-      "color_id": selectedColorIndex,
-      "image_id": selectedImageIndex,
+      "color_id": myVarColorId,
+      "image_id": myVarImageId,
       "created": getFormattedDateTime()
     };
     docRef.update(data);
 
     //
-    selectedImageIndex = 1;
+    selectedImageIndex = 0;
+    selectedColorIndex = 0;
     print(selectedImageIndex);
+    print(selectedColorIndex);
     //
+
     Navigator.pop(context);
   }
 }
