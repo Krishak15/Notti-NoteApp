@@ -3,24 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ColorPickerWidget extends StatefulWidget {
+  const ColorPickerWidget({super.key});
+
   @override
-  _ColorPickerWidgetState createState() => _ColorPickerWidgetState();
+  ColorPickerWidgetState createState() => ColorPickerWidgetState();
 }
 
-class _ColorPickerWidgetState extends State<ColorPickerWidget> {
+class ColorPickerWidgetState extends State<ColorPickerWidget> {
   int? selectedColorIndex;
 
   @override
   Widget build(BuildContext context) {
     AppStyle colorProvider = Provider.of<AppStyle>(context);
     return GridView.builder(
-      scrollDirection: Axis.horizontal,
+      scrollDirection: Axis.vertical,
       gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
       itemCount: colorProvider.cardsColor.length,
       itemBuilder: (context, index) {
         Color color = colorProvider.cardsColor[index];
         bool isSelected = index == selectedColorIndex;
+        int isFirst = index;
 
         return GestureDetector(
           onTap: () {
@@ -43,6 +46,9 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
                 width: isSelected ? 2 : 0,
               ),
             ),
+            child: isFirst == 0
+                ? const Icon(Icons.undo, color: Colors.blueGrey, size: 24)
+                : null,
           ),
         );
       },
