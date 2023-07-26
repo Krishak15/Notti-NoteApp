@@ -22,7 +22,9 @@ class ColorPickerWidgetState extends State<ColorPickerWidget> {
       itemCount: colorProvider.cardsColor.length,
       itemBuilder: (context, index) {
         Color color = colorProvider.cardsColor[index];
+
         bool isSelected = index == selectedColorIndex;
+
         int isFirst = index;
 
         return GestureDetector(
