@@ -111,15 +111,18 @@ class _AddNotesPageState extends State<AddNotesPage> {
                                 showModalBottomSheet(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: SizedBox(
-                                                height: 200,
-                                                child: ColorPickerWidget()),
-                                          ),
-                                        ],
+                                      return const SingleChildScrollView(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: SizedBox(
+                                                  height: 400,
+                                                  child: ColorPickerWidget()),
+                                            ),
+                                          ],
+                                        ),
                                       );
                                     });
                               },
@@ -136,15 +139,18 @@ class _AddNotesPageState extends State<AddNotesPage> {
                                 showModalBottomSheet(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return const Column(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: SizedBox(
-                                                height: 300,
-                                                child: BgPickerWidget()),
-                                          ),
-                                        ],
+                                      return const SingleChildScrollView(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: SizedBox(
+                                                  height: 400,
+                                                  child: BgPickerWidget()),
+                                            ),
+                                          ],
+                                        ),
                                       );
                                     });
                               },
