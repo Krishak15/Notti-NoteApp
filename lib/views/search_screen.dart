@@ -18,6 +18,7 @@ class NoteSearchPage extends StatefulWidget {
 
 class _NoteSearchPageState extends State<NoteSearchPage> {
   List<DocumentSnapshot> searchResults = [];
+
   TextEditingController searchController = TextEditingController();
 
   @override
@@ -33,17 +34,25 @@ class _NoteSearchPageState extends State<NoteSearchPage> {
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('notes');
-
-    String lowercaseQuery = query.toLowerCase();
+    //
+    String lowercaseQuery =
+        query.toLowerCase(); //it converts the search text we enter to lowercase
+    //
 
     notesRef.get().then((querySnapshot) {
+      //
       List<DocumentSnapshot> allNotes = querySnapshot.docs;
+      //
       List<DocumentSnapshot> filteredNotes = allNotes.where((note) {
-        String title = note.get('title').toString().toLowerCase();
-        String description = note.get('description').toString().toLowerCase();
+        //
+        String title = note.get('title').toString().toLowerCase(); //Note title
+        String description =
+            note.get('description').toString().toLowerCase(); //Note description
+        //
         return title.contains(lowercaseQuery) ||
             description.contains(lowercaseQuery);
       }).toList();
+      //
       setState(() {
         searchResults = filteredNotes;
       });
@@ -102,68 +111,64 @@ class _NoteSearchPageState extends State<NoteSearchPage> {
                             ),
                           );
                         },
-                        child: Hero(
-                          tag: 'card${note.id}}',
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            margin: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image:
-                                        AssetImage(bgImages[note['image_id']]),
-                                    fit: BoxFit.cover),
-                                color: cardsColori[note['color_id']],
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.2),
-                                          borderRadius:
-                                              BorderRadius.circular(15)),
-                                      width: double.infinity,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              note['title'],
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          margin: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage(bgImages[note['image_id']]),
+                                  fit: BoxFit.cover),
+                              color: cardsColori[note['color_id']],
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    width: double.infinity,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            note['title'],
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Expanded(
+                                            child: SizedBox(
+                                                child: Text(
+                                              note['description'],
                                               overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
+                                              maxLines: 4,
                                               style: GoogleFonts.poppins(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Expanded(
-                                              child: SizedBox(
-                                                  child: Text(
-                                                note['description'],
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 4,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 12),
-                                              )),
-                                            ),
-                                          ],
-                                        ),
+                                                  fontSize: 12),
+                                            )),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  note['created'].toString(),
-                                  style: GoogleFonts.poppins(fontSize: 10),
-                                )
-                              ],
-                            ),
+                              ),
+                              Text(
+                                note['created'].toString(),
+                                style: GoogleFonts.poppins(fontSize: 10),
+                              )
+                            ],
                           ),
                         ),
                       );
