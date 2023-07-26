@@ -28,10 +28,10 @@ class AppStyle with ChangeNotifier {
         'assets/bgimages/bluewhale.png',
       ];
 
-  int _selectedColorIndex = 0;
+  int _selectedColorIndex = 0; //Color index variable
   int _selectedImageIndex = 0;
 
-  int get selectedColorIndex => _selectedColorIndex;
+  int get selectedColorIndex => _selectedColorIndex; //
   int get selectedImageIndex => _selectedImageIndex;
 
   void setSelectedColorIndex(int index) {
