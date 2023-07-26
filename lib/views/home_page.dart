@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_noteapp/constants/themes.dart';
 import 'package:firebase_noteapp/views/note_editor.dart';
 import 'package:firebase_noteapp/views/search_screen.dart';
 import 'package:firebase_noteapp/widgets/drawer_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../controller/delete_controller.dart';
 import '../widgets/delete_popup.dart';
 import '../widgets/note_cards.dart';
 import 'add_notes.dart';
@@ -81,26 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection('notes');
 
-  void deleteDocument(String documentId) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('notes')
-          .doc(documentId)
-          .delete();
-      if (kDebugMode) {
-        print("Document deleted successfully");
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error deleting document: $e");
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    // final firestoreProvider = getFirestoreProvider(context);
+    // final notesData = firestoreProvider.notesData;
+
     return ZoomDrawer(
       controller: z,
       borderRadius: 50,
@@ -171,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   bottom: 12,
                 ),
                 child: Text(
-                  'Your Notes',
+                  'Notes',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
