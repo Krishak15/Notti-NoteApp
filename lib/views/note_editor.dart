@@ -10,7 +10,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../controller/delete_controller.dart';
 import '../widgets/color_picker.dart';
+import '../widgets/delete_popup.dart';
 
 class NoteEditorPage extends StatefulWidget {
   final id;
@@ -134,12 +136,45 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
 
     return WillPopScope(
       onWillPop: () async {
+        checkImageVariableChane();
+        checkColorVariableChange();
+        if (_titleController.text.isNotEmpty &&
+            _contentController.text.isNotEmpty) {
+          updateData(myImageVariable, myColorVariable);
+        } else {
+          const snackBar = SnackBar(
+            content: Text('Add Something !'),
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          return false;
+        }
+
         resetIndex();
         return true;
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: GestureDetector(
+                onTap: () {
+                  showDeleteConfirmationDialog(
+                    context,
+                    widget.id,
+                    deleteDocument,
+                  );
+                },
+                child: const Icon(
+                  Icons.delete_forever_rounded,
+                  color: Colors.red,
+                  size: 28,
+                ),
+              ),
+            )
+          ],
           title: Text("Add Note"),
           centerTitle: true,
           backgroundColor: Colors.transparent,
@@ -293,6 +328,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             if (_titleController.text.isNotEmpty &&
                 _contentController.text.isNotEmpty) {
               updateData(myImageVariable, myColorVariable);
+              resetIndex();
               // colorProvider.setSelectedImageIndex(0);
             } else {
               const snackBar = SnackBar(
