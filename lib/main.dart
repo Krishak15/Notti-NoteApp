@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_noteapp/constants/appstyles.dart';
 import 'package:firebase_noteapp/firebase_options.dart';
+
 import 'package:firebase_noteapp/views/home_page.dart';
 import 'package:firebase_noteapp/views/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,10 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => AppStyle(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => AppStyle()),
+    ],
     child: const MyApp(),
   ));
 }
